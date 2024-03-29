@@ -1,9 +1,9 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'TSH',
-  webDir: 'dist',
+  appId: 'com.vanthe.smartapp',
+  appName: 'tsh',
+  webDir: 'build',
   server: {
     androidScheme: 'https'
   }

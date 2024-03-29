@@ -14,6 +14,8 @@ import { ellipse, square, triangle } from 'ionicons/icons';
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
+import './theme/app.scss'
+import CredentialPage from './pages/Credential/CredentialPage'
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -33,13 +35,16 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import ForgotPasswordPage from './pages/ForgotPassword/ForgotPassword';
+import SignUpPage from './pages/SignUp/SignUp';
+import MenuPage from './pages/Menu/Menu';
 
 setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonTabs>
+      {/* <IonTabs>
         <IonRouterOutlet>
           <Route exact path="/tab1">
             <Tab1 />
@@ -68,7 +73,14 @@ const App: React.FC = () => (
             <IonLabel>Tab 3</IonLabel>
           </IonTabButton>
         </IonTabBar>
-      </IonTabs>
+      </IonTabs> */}
+      {/* <CredentialPage /> */}
+      {/* Redirect from root to /login */}
+      {/* <Route path="/" render={() => <Redirect to="/login" />} exact />  */}
+      <Route path="/forgot-password" component={ForgotPasswordPage} exact />
+      <Route path="/login" component={CredentialPage} exact />
+      <Route path="/signup" component={SignUpPage} exact />
+      <Route path="/" component={MenuPage} exact />
     </IonReactRouter>
   </IonApp>
 );
