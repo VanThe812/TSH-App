@@ -35,6 +35,8 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import ForgotPasswordPage from './pages/ForgotPassword/ForgotPassword';
+import SignUpPage from './pages/SignUp/SignUp';
 
 setupIonicReact();
 
@@ -71,7 +73,11 @@ const App: React.FC = () => (
           </IonTabButton>
         </IonTabBar>
       </IonTabs> */}
-      <CredentialPage />
+      {/* <CredentialPage /> */}
+      <Route path="/" render={() => <Redirect to="/login" />} exact /> {/* Redirect from root to /login */}
+      <Route path="/forgot-password" component={ForgotPasswordPage} exact />
+      <Route path="/login" component={CredentialPage} exact />
+      <Route path="/signup" component={SignUpPage} exact />
     </IonReactRouter>
   </IonApp>
 );
