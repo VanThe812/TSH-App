@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TSH</string>
-    <string name="title_activity_main">TSH</string>
-    <string name="package_name">io.ionic.starter</string>
-    <string name="custom_url_scheme">io.ionic.starter</string>
+    <string name="app_name">tsh</string>
+    <string name="title_activity_main">tsh</string>
+    <string name="package_name">com.vanthe.smartapp</string>
+    <string name="custom_url_scheme">com.vanthe.smartapp</string>
 </resources>
