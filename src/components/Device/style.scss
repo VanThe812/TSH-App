@@ -14,7 +14,10 @@
       top: 0;
       right: 0;
       color: #afccff;
-      opacity: 1 !important;
+      &-not-disable {
+        opacity: 1 !important;
+
+      }
     }
     &-box{
       display: flex;

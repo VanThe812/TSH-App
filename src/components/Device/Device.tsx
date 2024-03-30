@@ -128,7 +128,7 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ deviceData }) => {
           </IonButton>
         )}
         { deviceData.current_status == 'off' && (
-          <IonButton disabled className="my-item-card-turn-off-button" fill="clear">
+          <IonButton disabled className="my-item-card-turn-off-button my-item-card-turn-off-button-not-disable" fill="clear">
             <CircleExclamationIcon className={'my-item-card-icon-custom power-off'} />
           </IonButton>
         )}
