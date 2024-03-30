@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import { BrowserRouter, Redirect, Route } from 'react-router-dom';
 import {
   IonApp,
   IonIcon,
@@ -38,6 +38,7 @@ import './theme/variables.css';
 import ForgotPasswordPage from './pages/ForgotPassword/ForgotPassword';
 import SignUpPage from './pages/SignUp/SignUp';
 import MenuPage from './pages/Menu/Menu';
+import PersonalInformationPage from './pages/PersonalInformation/PersonalInformation';
 
 setupIonicReact();
 
