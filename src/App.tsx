@@ -55,7 +55,9 @@ const App: React.FC = () => {
         <IonApp>
           <IonReactRouter>
             <Redirect to={'/login'} />
+            <Route path="/forgot-password" component={ForgotPasswordPage} exact />
             <Route path="/login" component={CredentialPage} exact />
+            <Route path="/signup" component={SignUpPage} exact />
           </IonReactRouter>
         </IonApp>
     );
@@ -65,9 +67,7 @@ const App: React.FC = () => {
         <IonReactRouter>
           <MenuPage />
           {/* <Redirect to={"/login"} /> */}
-          <Route path="/forgot-password" component={ForgotPasswordPage} exact />
-          <Route path="/login" component={CredentialPage} exact />
-          <Route path="/signup" component={SignUpPage} exact />
+
           {/* <Route path="/" component={MenuPage} exact /> */}
         </IonReactRouter>
       </IonApp>

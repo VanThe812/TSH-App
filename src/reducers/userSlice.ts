@@ -102,10 +102,11 @@ const userSlice = createSlice({
       .addCase(forgotPasswordAsync.fulfilled, (state) => {
         state.loading = false;
         state.error = null;
+        // Handle success if needed
       })
       .addCase(forgotPasswordAsync.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Forgot password request failed';
+        state.error = action.payload as string; // Set the error message
       })
       .addCase(updateUserInfoAsync.pending, (state) => {
         state.loading = true;

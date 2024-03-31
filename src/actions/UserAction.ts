@@ -31,11 +31,20 @@ async (signupData: SignupData) => {
 
 export const forgotPasswordAsync = createAsyncThunk(
   'user/forgotPassword',
-  async (forgotPasswordData: ForgotPasswordData) => {
-    const response = await api.post('/user/forgot-password', forgotPasswordData);
-    return response.data;
+  async (forgotPasswordData: ForgotPasswordData, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/user/forgot-password', forgotPasswordData);
+      return response.data;
+    } catch (error:any) {
+      // Check if the error response has a status code of 404 and a message "User not found."
+      if (error.response?.status === 404 && error.response?.data?.message === "User not found.") {
+        return rejectWithValue("User not found."); // Reject the promise with a specific error message
+      } else {
+        return rejectWithValue("An error occurred during password reset."); // Reject with a generic error message
+      }
+    }
   }
-);
+)
 
 export const updateUserInfoAsync = createAsyncThunk(
   'user/updateUserInfo',
