@@ -1,0 +1,54 @@
+.profile {
+  &-info {
+    &-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding:1rem 0;
+      &-avatar {
+        width: 112px;
+        height: 112px;
+      }
+      &-content {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+        line-height: 1.4rem;
+        font-weight: 500;
+      }
+    }
+  }
+  &-list {
+    &-item {
+      &-button{
+        width: 100%;
+        --border-radius: 0.75rem;
+        &-box {
+          display: flex;
+          padding: 1rem 0.5rem;
+          width: 100%;
+          align-items: center;
+        }
+        &-icon {
+          font-size: 1rem;
+        }
+        &-content {
+          font-size: 1rem;
+          margin-left: 0.75rem;
+          font-weight: 600;
+          line-height: 1.15rem;
+          text-transform: initial;
+        }
+      }
+    }
+  }
+}
+.app-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 0;
+  &-text {
+    margin-bottom: 0.5rem;
+  }
+}

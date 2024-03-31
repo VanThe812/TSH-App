@@ -21,6 +21,7 @@ import ProfilePage from "../Profile/Profile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorClosed, faHouse, faUser, faWandMagicSparkles } from "@fortawesome/free-solid-svg-icons";
 import { IonReactRouter } from "@ionic/react-router";
+import PersonalInformationPage from "../PersonalInformation/PersonalInformation";
 
 const MenuPage: React.FC = () => {
   // Inside your component function
@@ -52,6 +53,7 @@ const MenuPage: React.FC = () => {
           <Route path="/home" component={HomePage} exact />
           <Route path="/rooms" component={RoomsPage} exact />
           <Route path="/automation" component={AutomationPage} exact />
+          <Route path="/profile/personal-information" component={PersonalInformationPage} exact />
           <Route path="/profile" component={ProfilePage} exact />
         </IonRouterOutlet>
         <IonTabBar className="menu-tab-bar" slot="bottom">

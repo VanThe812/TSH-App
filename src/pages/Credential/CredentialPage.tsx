@@ -10,36 +10,58 @@ import {
   IonNavLink,
   IonRouterLink,
   IonFooter,
+  IonToast,
+  IonLoading,
 } from "@ionic/react";
 import "./style.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faHouseSignal } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router";
 import ForgotPasswordPage from "../ForgotPassword/ForgotPassword";
-interface CredentialState {
-  username: string;
-  password: string;
-}
+import { useDispatch } from "react-redux";
+import {UserLoginParams} from "../../reducers/userSlice"
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
+import { loginUserAsync } from "../../actions/UserAction";
 
 const CredentialPage: React.FC = () => {
-  const [credentials, setCredentials] = useState<CredentialState>({
-    username: "",
+  const dispatch = useDispatch();
+  // Inside your component function
+  const loginError = useSelector((state: RootState) => state.user.loginError);
+  const loading = useSelector((state: RootState) => state.user.loading);
+  const history = useHistory();
+  const [credentials, setCredentials] = useState<UserLoginParams>({
+    account: "",
     password: "",
   });
-
+  const [showToast, setShowToast] = useState(false);
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
     setCredentials({ ...credentials, [name]: value });
+    console.log(credentials)
   };
 
-  const handleLogin = (event: React.FormEvent) => {
+
+  const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Implement your login logic here
-    console.log(credentials);
+    try {
+      // Dispatch loginUserAsync action with credentials
+      const action = await dispatch(loginUserAsync(credentials));
+      if (loginUserAsync.fulfilled.match(action)) {
+        history.push("/home"); // Replace '/home' with your route path for home page
+      } else {
+        setShowToast(true)
+        console.error("Login failed:", action?.error?.message);
+      }
+    } catch (error) {
+      setShowToast(false)
+
+      console.error("Login failed:", error);
+      // Handle login error (e.g., show error message)
+    }
   };
 
-  // Inside your component function
-  const history = useHistory();
+
 
   // Function to navigate to the Forgot Password Screen
   const navigateToForgotPassword = () => {
@@ -59,10 +81,10 @@ const CredentialPage: React.FC = () => {
               labelPlacement="floating"
               fill="outline"
               type="text"
-              name="username"
+              name="account"
               mode="md"
               className="login-form-item-input"
-              value={credentials.username}
+              value={credentials.account}
               onIonChange={handleInputChange}
               required
               placeholder="Enter username"
@@ -105,6 +127,19 @@ const CredentialPage: React.FC = () => {
             </IonButton>
           </IonRouterLink>
         </IonFooter>
+        <IonToast
+        isOpen={!!showToast}
+        onDidDismiss={() => setShowToast(false)}
+        message={loginError ?? ''}
+        duration={1000}
+        color="danger"
+        position="bottom"
+      />
+      <IonLoading
+        isOpen={loading}
+        message={'Please wait...'}
+        spinner="circles" // Use 'circles' spinner style
+      />
     </IonPage>
   );
 };

@@ -1,0 +1,69 @@
+.room-item {
+  &-box {
+    width: 100%;
+  }
+  &-name {
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: initial;
+  }
+}
+.room-no-item {
+  display: flex;
+  width: 100%;
+  padding: 1rem;
+  justify-content: center;
+}
+
+.my-item {
+  &-card {
+    height: 100%;
+    display: flex;
+    margin: 0.5rem;
+    align-items: center;
+    
+
+    border-radius: 1rem !important;
+    &-header {
+    }
+    &-icon {
+    }
+
+    &-content {
+      padding-top: 20px !important;
+      padding-bottom: 16px !important;
+      padding-left: 0 !important;
+      &-title{
+      }
+    }
+  }
+
+}
+.add-devices {
+  &-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &-icon {
+      font-size: 0.5rem;
+      margin:0  0.5rem;
+    }
+  }
+}
+.select-rooms {
+}
+ion-select::part(placeholder),
+ion-select::part(text) {
+  flex: 0 0 auto;
+  width: 100vw;
+}
+.item-filter {
+  border: 1px solid #ccc;
+    border-radius: 1rem;
+}
+ion-fab {
+  margin-bottom: 3rem;
+}
+.add-devices-icon {
+  font-size: 1.5rem;
+}
