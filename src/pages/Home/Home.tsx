@@ -10,6 +10,7 @@ import {
   IonHeader,
   IonItem,
   IonList,
+  IonModal,
   IonPage,
   IonRouterLink,
   IonRow,
@@ -17,15 +18,17 @@ import {
   IonToolbar,
   useIonRouter,
 } from "@ionic/react";
-import React from "react";
+import React, { useState } from "react";
 import "./style.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faCirclePlus, faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
 import DeviceItem from "../../components/Device/Device";
 import { useHistory } from "react-router";
+import AddDevicesPage from "../AddDevices/AddDevices";
+import AddDevicesSheet from "../../components/AddDevices/AddDevices";
 
 const HomePage: React.FC = () => {
-
+  const [showModal, setShowModal] = useState(false);
   const ListDeviceData = [
     {
       type:'temperature',//temperature || door || switch || light
@@ -91,22 +94,30 @@ const HomePage: React.FC = () => {
 
   const router = useIonRouter();
   const history = useHistory();
-  const goToPage = () => {
-    // router.push('/add-devices', 'root', 'replace');
-    history.push('/add-devices');
+
+  const openModal = () => {
+    setShowModal(true);
   };
 
-  console.log('abc')
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const goToPage = () => {
+    // history.push('/add-devices');
+    openModal();
+  };
+
 
   return (
     <IonPage className="home-page">
       <IonHeader>
         <IonToolbar>
+          <IonText mode="ios" slot="start">My Home</IonText>
           <IonButtons slot="end">
           {/* <IonRouterLink routerLink="/add-devices" routerDirection="forward"> */}
-            <IonButton onClick={goToPage} className="add-devices-button">
-            <FontAwesomeIcon className="add-devices-icon" icon={faPlus} />
-              <IonText className="add-devices-label">Add Devices</IonText>
+            <IonButton onClick={goToPage} className="add-devices-button" fill="clear">
+            <FontAwesomeIcon className="add-devices-button-icon" icon={faCirclePlus} />
             </IonButton>
             {/* </IonRouterLink> */}
           </IonButtons>
@@ -131,6 +142,11 @@ const HomePage: React.FC = () => {
           </IonGrid>
         </IonList>
       </IonContent>
+      <IonModal isOpen={showModal} onDidDismiss={closeModal} initialBreakpoint={0.25}
+          breakpoints={[0, 0.5, 0.75]}
+          handleBehavior="cycle">
+        <AddDevicesSheet onClose={closeModal} />
+      </IonModal>
     </IonPage>
   );
 };
