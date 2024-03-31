@@ -229,6 +229,7 @@ const SignUpPage: React.FC = () => {
               interface="action-sheet"
               fill="outline"
               mode="md"
+              value={formData.gender}
               onIonChange={handleInputChange}
             >
               <IonSelectOption value="male">Male</IonSelectOption>

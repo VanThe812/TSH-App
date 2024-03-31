@@ -9,7 +9,7 @@ export interface User {
     dateOfBirth: number;
     address: string;
     email: string;
-    gender: string;
+    gender: 'male' | 'female' | 'other';
     account: string;
     timecreate: number;
     timemodifile: number;
@@ -112,8 +112,9 @@ const userSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateUserInfoAsync.fulfilled, (state) => {
+      .addCase(updateUserInfoAsync.fulfilled, (state, action) => {
         state.loading = false;
+        state.user = {...state.user, ...action.payload};
         state.error = null;
       })
       .addCase(updateUserInfoAsync.rejected, (state, action) => {

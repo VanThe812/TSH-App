@@ -21,29 +21,14 @@ import { useHistory } from "react-router-dom";
 import { App } from "@capacitor/app";
 import { useDispatch } from "react-redux";
 import { clearAllUserData } from "../../actions/UserAction";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
 const ProfilePage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [loadingModal] = useIonLoading(); // To show a toast message
 
-  const userData = {
-    _id: "6607f951d0cd757eb83c2466",
-    fullname: "top1victory",
-    dateOfBirth: 1034040000,
-    address: "Address 123",
-    email: "top1victory23082018@gmail.com",
-    gender: "male",
-    account: "top1victory",
-    timecreate: 1711798609,
-    timemodifile: 1711798609,
-    role_id: "660786265f31905c6b79d22a",
-    __v: 0,
-    status_account: "forgotpass",
-    timeaccess: 1711824528,
-    token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDdmOTUxZDBjZDc1N2ViODNjMjQ2NiIsImlhdCI6MTcxMTgyNDY2MCwiZXhwIjoxNzEyNDI5NDYwfQ.3Cr8tpDjG8pMNxrBLEKVFuzzpVhUwuxIc8ZmL3q0Zmc",
-  };
-
+  const userData = useSelector((state: RootState) => state.user.user);
   console.log(history)
 
   const handleGoToScreenInformation = (e:any) => {
@@ -83,7 +68,7 @@ const ProfilePage: React.FC = () => {
             />
           </IonAvatar>
           <IonText className="profile-info-box-content">
-            Hello, {userData.fullname}!
+            Hello, {userData?.fullname}!
           </IonText>
         </div>
         <IonList className="profile-list">

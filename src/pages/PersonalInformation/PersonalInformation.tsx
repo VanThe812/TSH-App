@@ -12,36 +12,54 @@ import {
   IonPage,
   IonRadio,
   IonRadioGroup,
+  IonSelect,
+  IonSelectOption,
   IonText,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from "@ionic/react";
 import React, { useState } from "react";
 import "./style.scss";
+import { UpdateUserInfoData } from "../../reducers/userSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
+import { updateUserInfoAsync } from "../../actions/UserAction";
 const PersonalInformationPage: React.FC = () => {
-  const fakeruserData = {
-    _id: "6607f951d0cd757eb83c2466",
-    fullname: "top1victory",
-    dateOfBirth: 1711798609,
-    address: "Address 123",
-    email: "top1victory23082018@gmail.com",
-    gender: "male",
-    account: "top1victory",
-    timecreate: 1711798609,
-    timemodifile: 1711798609,
-    role_id: "660786265f31905c6b79d22a",
-    __v: 0,
-    status_account: "forgotpass",
-    timeaccess: 1711824528,
-    token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDdmOTUxZDBjZDc1N2ViODNjMjQ2NiIsImlhdCI6MTcxMTgyNDY2MCwiZXhwIjoxNzEyNDI5NDYwfQ.3Cr8tpDjG8pMNxrBLEKVFuzzpVhUwuxIc8ZmL3q0Zmc",
+  const loading = useSelector((state: RootState) => state.user.loading);
+  const userDataRedux = useSelector((state: RootState) => state.user.user);
+
+  const [userData, setUserData] = useState<UpdateUserInfoData>(
+    {
+      email:userDataRedux?.email || '' ,
+      dateOfBirth: userDataRedux?.dateOfBirth || -1,
+      gender: userDataRedux?.gender || 'male',
+      fullname:userDataRedux?.fullname || '',
+      address:userDataRedux?.address || '',
+      token:userDataRedux?.token || ''
+    }
+  );
+  const [presentToast] = useIonToast();
+  const dispatch = useDispatch();
+  function formatUnixTimestamp(timestamp: number) {
+    const date = new Date(timestamp * 1000);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // January is 0!
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
   };
-  const [userData, setUserData] = useState(fakeruserData);
-  const handleInputChange = (key: keyof typeof userData, value: any) => {
-    setUserData((prevData) => ({
-      ...prevData,
-      [key]: value,
-    }));
+
+
+  const handleInputChange = (event: any) => {
+    const { name, value } = event.target;
+    console.log(name, value);
+    setUserData({ ...userData, [name]: value });
+  };
+  const handleDateTimeChange = (event: any) => {
+    const { name, value } = event.target;
+    console.log(name, value, { ...userData, [name]: Date.parse(value) / 1000 });
+    setUserData({ ...userData, [name]: Date.parse(value) / 1000 });
   };
 
   const formatDate = (dateString: string) => {
@@ -51,11 +69,62 @@ const PersonalInformationPage: React.FC = () => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+  console.log(userDataRedux)
 
   const handleUpdateData = () => {
     // Implement your update logic here, e.g., make an API call to update the user data
     console.log("Updated data:", userData);
   };
+  // Handle form submission
+  const handleSignup = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    // Perform form validation
+    if (
+      !userData.email ||
+      !userData.fullname ||
+      !userData.address ||
+      !userData.gender ||
+      !userData.dateOfBirth
+    ) {
+      presentToast({ message:"Please fill in all required fields.", duration: 3000, color: "danger"});
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userData.email)) {
+      presentToast({ message:"Invalid email format.", duration: 3000, color: "danger"});
+      return;
+    }
+
+    try {
+      const submitData: UpdateUserInfoData = {
+        email:userData.email,
+        fullname:userData.fullname,
+        address:userData.address,
+        gender:userData.gender,
+        dateOfBirth:userData.dateOfBirth,
+        token:userData.token
+      };
+      // Dispatch signupUserAsync action
+      const action = await dispatch(updateUserInfoAsync(userData));
+
+      // If successful, show success message
+      if (updateUserInfoAsync.fulfilled.match(action)) {
+        presentToast({ message: "Update successful!", duration: 3000, color: "success" });
+        // window.location.reload();
+        // Optionally, redirect user to another page
+      } else {
+        // Handle other errors if needed
+        presentToast({ message:"Failed Update Data User. Please try again later", duration: 3000, color: "danger" });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      presentToast({ message:"Failed Update Data User. Please try again later.", duration: 3000, color: "danger"});
+    }
+  };
+
   return (
     <IonPage className="personal-information-page">
       <IonHeader>
@@ -67,70 +136,90 @@ const PersonalInformationPage: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <IonList>
-          <IonLabel position="floating">Full Name</IonLabel>
-          <IonInput
-            labelPlacement="floating"
-            fill="outline"
-            mode="md"
-            className="login-form-item-input"
-            value={userData.fullname}
-            onIonChange={(e) => handleInputChange("fullname", e.detail.value!)}
-          />
-          <IonLabel position="floating">Email</IonLabel>
-          <IonInput
-            labelPlacement="floating"
-            fill="outline"
-            mode="md"
-            className="login-form-item-input"
-            type="email"
-            value={userData.email}
-            onIonChange={(e) => handleInputChange("email", e.detail.value!)}
-          />
-          <IonLabel position="floating">Address</IonLabel>
-          <IonInput
-            labelPlacement="floating"
-            fill="outline"
-            mode="md"
-            className="login-form-item-input"
-            value={userData.address}
-            onIonChange={(e) => handleInputChange("address", e.detail.value!)}
-          />
-
-          <IonLabel>Gender</IonLabel>
-          <IonRadioGroup
-            value={userData.gender}
-            onIonChange={(e) => handleInputChange("gender", e.detail.value)}
-          >
-            <IonLabel>Male</IonLabel>
-            <IonRadio aria-label="Custom checkbox" slot="start" value="male" />
-
-            <IonLabel>Female</IonLabel>
-            <IonRadio
-              aria-label="Custom checkbox"
-              slot="start"
-              value="female"
-            />
-
-            <IonLabel>Other</IonLabel>
-            <IonRadio aria-label="Custom checkbox" slot="start" value="other" />
-          </IonRadioGroup>
-
-          <IonLabel position="floating">Date of Birth</IonLabel>
-          <IonInput
-            labelPlacement="floating"
-            fill="outline"
-            mode="md"
-            className="login-form-item-input"
-            type="date"
-            value={userData.dateOfBirth}
-            onIonChange={(e) =>
-              handleInputChange("dateOfBirth", e.detail.value!)
-            }
-          />
-
-          <IonButton onClick={handleUpdateData}>Update Data</IonButton>
-        </IonList>
+      <form onSubmit={handleSignup} className="signup-form">
+            <IonInput
+              label="Username"
+              labelPlacement="floating"
+              fill="outline"
+              type="text"
+              name="account"
+              mode="md"
+              className="signup-form-item-input"
+              value={userDataRedux?.account}
+              onIonChange={handleInputChange}
+              disabled
+              placeholder="Enter username"
+            ></IonInput>
+            <IonInput
+              label="Email"
+              labelPlacement="floating"
+              fill="outline"
+              type="email"
+              name="email"
+              mode="md"
+              className="signup-form-item-input"
+              value={userData.email}
+              onIonChange={handleInputChange}
+              required
+              placeholder="Enter Email"
+            ></IonInput>
+            <IonInput
+              label="Full Name"
+              labelPlacement="floating"
+              fill="outline"
+              type="text"
+              name="fullname"
+              mode="md"
+              className="signup-form-item-input"
+              value={userData.fullname}
+              onIonChange={handleInputChange}
+              required
+              placeholder="Enter full name"
+            ></IonInput>
+            <IonInput
+              label="Date of Birth"
+              labelPlacement="floating"
+              fill="outline"
+              type="date"
+              name="dateOfBirth"
+              mode="md"
+              className="signup-form-item-input"
+              value={formatUnixTimestamp(userData.dateOfBirth || -1)}
+              onIonChange={handleDateTimeChange}
+              required
+            ></IonInput>
+            <IonSelect
+              label="Gender"
+              name="gender"
+              labelPlacement="floating"
+              className="signup-form-item-input"
+              interface="action-sheet"
+              fill="outline"
+              mode="md"
+              value={userData.gender}
+              onIonChange={handleInputChange}
+            >
+              <IonSelectOption value="male">Male</IonSelectOption>
+              <IonSelectOption value="female">Female</IonSelectOption>
+              <IonSelectOption value="other">Other</IonSelectOption>
+            </IonSelect>
+            <IonInput
+              label="Address"
+              labelPlacement="floating"
+              fill="outline"
+              type="text"
+              name="address"
+              mode="md"
+              className="signup-form-item-input"
+              value={userData.address}
+              onIonChange={handleInputChange}
+              placeholder="Enter Address"
+            ></IonInput>
+            <IonButton type="submit" expand="block" className="ion-margin-top">
+              Update
+            </IonButton>
+            
+          </form>
       </IonContent>
     </IonPage>
   );
