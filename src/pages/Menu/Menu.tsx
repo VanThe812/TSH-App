@@ -11,8 +11,9 @@ import {
   IonTabs,
   IonToolbar,
 } from "@ionic/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect, Route, useHistory } from "react-router";
+import { useLocation } from 'react-router-dom';
 import "./style.scss";
 import HomePage from "../Home/Home";
 import RoomsPage from "../Rooms/Rooms";
@@ -22,15 +23,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorClosed, faHouse, faUser, faWandMagicSparkles } from "@fortawesome/free-solid-svg-icons";
 import { IonReactRouter } from "@ionic/react-router";
 import PersonalInformationPage from "../PersonalInformation/PersonalInformation";
+import AddDevicesPage from "../AddDevices/AddDevices";
+import classNames from "classnames";
 
 const MenuPage: React.FC = () => {
   // Inside your component function
   const history = useHistory();
   const [username, setUsername] = useState("");
-
+  const location = useLocation();
+  const [showTabs, setShowTabs] = useState<boolean>(false);
+  console.log(location,window.location.href)
   const handleUsernameChange = (e: any) => {
     setUsername(e.detail.value);
   };
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +44,13 @@ const MenuPage: React.FC = () => {
     console.log("Reset password for username:", username);
   };
 
+  useEffect(() => {
+    console.log('Location changed:', location.pathname);
+    // Check if the current path is related to tabs
+    const isTabScreen = location.pathname.startsWith('/home') || location.pathname.startsWith('/rooms') || location.pathname.startsWith('/automation') || location.pathname.startsWith('/profile');
+    console.log('Is tab screen?', isTabScreen);
+    setShowTabs(isTabScreen);
+  }, [location]);
   return (
     <IonReactRouter>
       {/* <IonHeader>
@@ -55,8 +68,10 @@ const MenuPage: React.FC = () => {
           <Route path="/automation" component={AutomationPage} exact />
           <Route path="/profile/personal-information" component={PersonalInformationPage} exact />
           <Route path="/profile" component={ProfilePage} exact />
+        <Route path="/add-devices" component={AddDevicesPage} exact />
+
         </IonRouterOutlet>
-        <IonTabBar className="menu-tab-bar" slot="bottom">
+        <IonTabBar hidden={!showTabs} className={classNames("menu-tab-bar")} slot="bottom">
           <IonTabButton className="menu-tab-bar-button" tab="home" href="/home">
             <FontAwesomeIcon className="menu-tab-bar-button-icon" icon={faHouse} />
             <IonLabel className="menu-tab-bar-button-label">Home</IonLabel>

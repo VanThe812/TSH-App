@@ -1,6 +1,6 @@
 // src/store/userSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { forgotPasswordAsync, loginUserAsync, signupUserAsync } from '../actions/UserAction';
+import { forgotPasswordAsync, loginUserAsync, signupUserAsync, updateUserInfoAsync } from '../actions/UserAction';
 
 
 export interface User {
@@ -39,7 +39,16 @@ export interface ForgotPasswordData {
   email: string;
 }
 
-interface UserState {
+export interface UpdateUserInfoData {
+  fullname: string;
+  dateOfBirth: number;
+  address?: string;
+  email: string;
+  gender: 'male' | 'female' | 'other';
+  token: string;
+}
+
+export interface UserState {
     user: User | null;
     loading: boolean;
     error: string | null;
@@ -69,8 +78,9 @@ const userSlice = createSlice({
           state.loginError = null; // Clear login error on successful login
       })
       .addCase(loginUserAsync.rejected, (state, action) => {
+        console.log(action.error)
           state.loading = false;
-          state.loginError = action.error.message || 'Login failed';
+          state.loginError = action.payload as string || '';
       })
       .addCase(signupUserAsync.pending, (state) => {
         state.loading = true;
@@ -96,6 +106,18 @@ const userSlice = createSlice({
       .addCase(forgotPasswordAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Forgot password request failed';
+      })
+      .addCase(updateUserInfoAsync.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserInfoAsync.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updateUserInfoAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Update user information failed';
       });
     },
 });

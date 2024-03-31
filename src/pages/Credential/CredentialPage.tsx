@@ -47,6 +47,7 @@ const CredentialPage: React.FC = () => {
     try {
       // Dispatch loginUserAsync action with credentials
       const action = await dispatch(loginUserAsync(credentials));
+      console.log(action)
       if (loginUserAsync.fulfilled.match(action)) {
         history.push("/home"); // Replace '/home' with your route path for home page
       } else {

@@ -1,0 +1,8 @@
+.tabar-hidden {
+  transform: translateY(100%) !important;
+}
+.menu-tab-bar {
+  transform: translateY(0);
+  transition: all 0.25s ease;
+
+}

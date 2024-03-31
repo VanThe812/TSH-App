@@ -41,25 +41,37 @@ import MenuPage from "./pages/Menu/Menu";
 import PersonalInformationPage from "./pages/PersonalInformation/PersonalInformation";
 import { Provider } from "react-redux";
 import store from "./stores";
+import AddDevicesPage from "./pages/AddDevices/AddDevices";
+import { useSelector } from "react-redux";
+import { selectUserToken } from "./selectors/selector";
 
 setupIonicReact();
 
-const App: React.FC = () => (
-  <Provider store={store}>
-    <IonApp>
-      <IonReactRouter>
-        <MenuPage />
-        <Redirect to={"/login"} />
-        {/* <CredentialPage /> */}
-        {/* Redirect from root to /login */}
-        {/* <Route path="/" render={() => <Redirect to="/login" />} exact />  */}
-        <Route path="/forgot-password" component={ForgotPasswordPage} exact />
-        <Route path="/login" component={CredentialPage} exact />
-        <Route path="/signup" component={SignUpPage} exact />
-        <Route path="/" component={MenuPage} exact />
-      </IonReactRouter>
-    </IonApp>
-  </Provider>
-);
+const App: React.FC = () => {
+  const userToken = useSelector(selectUserToken);
+  console.log(userToken)
+  if (!userToken) {
+    return (
+        <IonApp>
+          <IonReactRouter>
+            <Redirect to={'/login'} />
+            <Route path="/login" component={CredentialPage} exact />
+          </IonReactRouter>
+        </IonApp>
+    );
+  }
+  return (
+      <IonApp>
+        <IonReactRouter>
+          <MenuPage />
+          {/* <Redirect to={"/login"} /> */}
+          <Route path="/forgot-password" component={ForgotPasswordPage} exact />
+          <Route path="/login" component={CredentialPage} exact />
+          <Route path="/signup" component={SignUpPage} exact />
+          {/* <Route path="/" component={MenuPage} exact /> */}
+        </IonReactRouter>
+      </IonApp>
+  );
+};
 
 export default App;

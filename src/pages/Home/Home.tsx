@@ -11,15 +11,18 @@ import {
   IonItem,
   IonList,
   IonPage,
+  IonRouterLink,
   IonRow,
   IonText,
   IonToolbar,
+  useIonRouter,
 } from "@ionic/react";
 import React from "react";
 import "./style.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
 import DeviceItem from "../../components/Device/Device";
+import { useHistory } from "react-router";
 
 const HomePage: React.FC = () => {
 
@@ -86,15 +89,25 @@ const HomePage: React.FC = () => {
     }
   ]
 
+  const router = useIonRouter();
+  const history = useHistory();
+  const goToPage = () => {
+    // router.push('/add-devices', 'root', 'replace');
+    history.push('/add-devices');
+  };
+
+
   return (
     <IonPage className="home-page">
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="end">
-            <IonButton className="add-devices-button">
+          {/* <IonRouterLink routerLink="/add-devices" routerDirection="forward"> */}
+            <IonButton onClick={goToPage} className="add-devices-button">
             <FontAwesomeIcon className="add-devices-icon" icon={faPlus} />
               <IonText className="add-devices-label">Add Devices</IonText>
             </IonButton>
+            {/* </IonRouterLink> */}
           </IonButtons>
         </IonToolbar>
       </IonHeader>
