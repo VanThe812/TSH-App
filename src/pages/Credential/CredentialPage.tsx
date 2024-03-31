@@ -50,6 +50,7 @@ const CredentialPage: React.FC = () => {
       console.log(action)
       if (loginUserAsync.fulfilled.match(action)) {
         history.push("/home"); // Replace '/home' with your route path for home page
+        window.location.reload()
       } else {
         setShowToast(true)
         console.error("Login failed:", action?.error?.message);
@@ -84,6 +85,7 @@ const CredentialPage: React.FC = () => {
               type="text"
               name="account"
               mode="md"
+              autocorrect="on"
               className="login-form-item-input"
               value={credentials.account}
               onIonChange={handleInputChange}

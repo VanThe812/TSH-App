@@ -10,6 +10,7 @@ import {
   IonText,
   IonTitle,
   IonToolbar,
+  useIonLoading,
   useIonRouter,
 } from "@ionic/react";
 import React from "react";
@@ -18,7 +19,13 @@ import { faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useHistory } from "react-router-dom";
 import { App } from "@capacitor/app";
+import { useDispatch } from "react-redux";
+import { clearAllUserData } from "../../actions/UserAction";
 const ProfilePage: React.FC = () => {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const [loadingModal] = useIonLoading(); // To show a toast message
+
   const userData = {
     _id: "6607f951d0cd757eb83c2466",
     fullname: "top1victory",
@@ -37,15 +44,18 @@ const ProfilePage: React.FC = () => {
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MDdmOTUxZDBjZDc1N2ViODNjMjQ2NiIsImlhdCI6MTcxMTgyNDY2MCwiZXhwIjoxNzEyNDI5NDYwfQ.3Cr8tpDjG8pMNxrBLEKVFuzzpVhUwuxIc8ZmL3q0Zmc",
   };
 
-  const history = useHistory();
   console.log(history)
 
   const handleGoToScreenInformation = (e:any) => {
     e.preventDefault();
     history.push('/personal-information');
   }
-  const handleLogout = () => {
-     
+  const handleLogout = async () => {
+    await loadingModal('Logout...',500,'circles')
+    setTimeout(() => {
+    dispatch(clearAllUserData());
+    history.push('/login')
+    }, 600);
   }
   // const ionRouter = useIonRouter();
   // document.addEventListener('ionBackButton', (ev:any) => {

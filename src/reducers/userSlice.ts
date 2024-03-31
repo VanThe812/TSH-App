@@ -1,6 +1,6 @@
 // src/store/userSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { forgotPasswordAsync, loginUserAsync, signupUserAsync, updateUserInfoAsync } from '../actions/UserAction';
+import { clearAllUserData, forgotPasswordAsync, loginUserAsync, signupUserAsync, updateUserInfoAsync } from '../actions/UserAction';
 
 
 export interface User {
@@ -23,7 +23,7 @@ export interface User {
 export interface SignupData {
   account: string;
   fullname: string;
-  dateOfBirth: number;
+  dateOfBirth: number | undefined;
   address?: string;
   email: string;
   gender: 'male' | 'female' | 'other';
@@ -119,7 +119,14 @@ const userSlice = createSlice({
       .addCase(updateUserInfoAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Update user information failed';
-      });
+      })
+      .addCase(clearAllUserData, (state) => {
+        state.user = null;
+        state.loading = false;
+        state.error = null;
+        state.loginError = null;
+    });
+
     },
 });
 

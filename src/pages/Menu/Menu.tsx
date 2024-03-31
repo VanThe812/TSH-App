@@ -44,13 +44,6 @@ const MenuPage: React.FC = () => {
     console.log("Reset password for username:", username);
   };
 
-  useEffect(() => {
-    console.log('Location changed:', location.pathname);
-    // Check if the current path is related to tabs
-    const isTabScreen = location.pathname.startsWith('/home') || location.pathname.startsWith('/rooms') || location.pathname.startsWith('/automation') || location.pathname.startsWith('/profile');
-    console.log('Is tab screen?', isTabScreen);
-    setShowTabs(isTabScreen);
-  }, [location]);
   return (
     <IonReactRouter>
       {/* <IonHeader>
@@ -71,7 +64,7 @@ const MenuPage: React.FC = () => {
         <Route path="/add-devices" component={AddDevicesPage} exact />
 
         </IonRouterOutlet>
-        <IonTabBar hidden={!showTabs} className={classNames("menu-tab-bar")} slot="bottom">
+        <IonTabBar selectedTab="home" className={classNames("menu-tab-bar")} slot="bottom">
           <IonTabButton className="menu-tab-bar-button" tab="home" href="/home">
             <FontAwesomeIcon className="menu-tab-bar-button-icon" icon={faHouse} />
             <IonLabel className="menu-tab-bar-button-label">Home</IonLabel>

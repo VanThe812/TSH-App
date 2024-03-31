@@ -44,6 +44,7 @@ import store from "./stores";
 import AddDevicesPage from "./pages/AddDevices/AddDevices";
 import { useSelector } from "react-redux";
 import { selectUserToken } from "./selectors/selector";
+import { useEffect } from "react";
 
 setupIonicReact();
 
@@ -62,6 +63,13 @@ const App: React.FC = () => {
         </IonApp>
     );
   }
+  console.log('abcd')
+  // useEffect(() => {
+  //   return () => {
+  //   window.location.reload();
+  //   }
+  // }, [userToken])
+  
   return (
       <IonApp>
         <IonReactRouter>
@@ -75,3 +83,7 @@ const App: React.FC = () => {
 };
 
 export default App;
+{/* <Route path="/forgot-password" component={ForgotPasswordPage} exact />
+<Route path="/login" component={CredentialPage} exact />
+<Route path="/signup" component={SignUpPage} exact />
+<Route path="/" component={userToken ? MenuPage : CredentialPage} /> */}

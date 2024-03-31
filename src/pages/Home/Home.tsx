@@ -96,6 +96,7 @@ const HomePage: React.FC = () => {
     history.push('/add-devices');
   };
 
+  console.log('abc')
 
   return (
     <IonPage className="home-page">

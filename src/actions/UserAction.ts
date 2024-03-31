@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ForgotPasswordData, SignupData, UpdateUserInfoData, UserLoginParams } from "../reducers/userSlice";
 import api from '../services/api';
 
@@ -53,3 +53,4 @@ export const updateUserInfoAsync = createAsyncThunk(
     return response.data;
   }
 );
+export const clearAllUserData = createAction<void>('user/clearUserData');
