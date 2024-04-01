@@ -108,12 +108,15 @@ const HomePage: React.FC = () => {
     openModal();
   };
 
+  const [initialBreakpoint, setInitialBreakpoint] = useState(0.4);
+
+
 
   return (
     <IonPage className="home-page">
       <IonHeader>
         <IonToolbar>
-          <IonText mode="ios" slot="start">My Home</IonText>
+          <IonText mode="ios" className="header-title ion-margin" slot="start">My Home</IonText>
           <IonButtons slot="end">
           {/* <IonRouterLink routerLink="/add-devices" routerDirection="forward"> */}
             <IonButton onClick={goToPage} className="add-devices-button" fill="clear">
@@ -142,8 +145,7 @@ const HomePage: React.FC = () => {
           </IonGrid>
         </IonList>
       </IonContent>
-      <IonModal isOpen={showModal} onDidDismiss={closeModal} initialBreakpoint={0.25}
-          breakpoints={[0, 0.5, 0.75]}
+      <IonModal isOpen={showModal} breakpoints={[initialBreakpoint,1]} onDidDismiss={closeModal} initialBreakpoint={initialBreakpoint}
           handleBehavior="cycle">
         <AddDevicesSheet onClose={closeModal} />
       </IonModal>
