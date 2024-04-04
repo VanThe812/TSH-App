@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   IonPage,
   IonContent,
@@ -17,47 +17,33 @@ import "./style.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse, faHouseSignal } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router";
-import ForgotPasswordPage from "../ForgotPassword/ForgotPassword";
+import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import {UserLoginParams} from "../../reducers/userSlice"
+import { UserLoginParams } from "../../reducers/userSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores";
 import { loginUserAsync } from "../../actions/UserAction";
 
 const CredentialPage: React.FC = () => {
   const dispatch = useDispatch();
-  // Inside your component function
+  const history = useHistory();
+  const { register, handleSubmit, formState: { errors } } = useForm<UserLoginParams>();
   const loginError = useSelector((state: RootState) => state.user.loginError);
   const loading = useSelector((state: RootState) => state.user.loading);
-  const history = useHistory();
-  const [credentials, setCredentials] = useState<UserLoginParams>({
-    account: "",
-    password: "",
-  });
-  const [showToast, setShowToast] = useState(false);
-  const handleInputChange = (event: any) => {
-    const { name, value } = event.target;
-    setCredentials({ ...credentials, [name]: value });
-    console.log(credentials)
-  };
+  const [showToast, setShowToast] = React.useState(false);
 
-
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const onSubmit = async (data: UserLoginParams) => {
     try {
-      // Dispatch loginUserAsync action with credentials
-      const action = await dispatch(loginUserAsync(credentials));
-      console.log(action)
+      const action = await dispatch(loginUserAsync(data));
       if (loginUserAsync.fulfilled.match(action)) {
         history.push("/home"); // Replace '/home' with your route path for home page
         window.location.reload()
       } else {
-        setShowToast(true)
+        setShowToast(true);
         console.error("Login failed:", action?.error?.message);
       }
     } catch (error) {
-      setShowToast(false)
-
+      setShowToast(false);
       console.error("Login failed:", error);
       // Handle login error (e.g., show error message)
     }
@@ -77,34 +63,27 @@ const CredentialPage: React.FC = () => {
           <div className="login-logo-box">
             <FontAwesomeIcon icon={faHouseSignal} className="login-logo-icon" />
           </div>
-          <form onSubmit={handleLogin} className="login-form">
+          <form onSubmit={handleSubmit(onSubmit)} className="login-form">
             <IonInput
-              label="username"
+              label="Username"
               labelPlacement="floating"
               fill="outline"
               type="text"
-              name="account"
               mode="md"
-              autocorrect="on"
               className="login-form-item-input"
-              value={credentials.account}
-              onIonChange={handleInputChange}
-              required
+              {...register("account", { required: true })}
               placeholder="Enter username"
-            ></IonInput>
+            />
             <IonInput
               label="Password"
               labelPlacement="floating"
               fill="outline"
               type="password"
-              name="password"
               mode="md"
               className="login-form-item-input"
-              value={credentials.password}
-              onIonChange={handleInputChange}
-              required
+              {...register("password", { required: true })}
               placeholder="Enter Password"
-            ></IonInput>
+            />
             <IonButton
               type="submit"
               expand="block"
