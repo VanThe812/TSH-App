@@ -6,6 +6,7 @@ import "swiper/swiper-bundle.css";
 import "./style.scss";
 import {
   faCircleCheck,
+  faClose,
   faDoorClosed,
   faDroplet,
   faLightbulb,
@@ -180,6 +181,22 @@ const AddDevicesSheet: React.FC<AddDevicesSheetProps> = ({ onClose }) => {
             </form>
           </SwiperSlide>
         );
+        case 4:
+          return (
+            <SwiperSlide key={step}>
+              <div className="add-device-card ion-padding">
+                <div className="add-device-card-icon-box">
+                  <FontAwesomeIcon
+                    className="add-device-card-icon add-device-card-icon-success"
+                    mode={"outline"}
+                    icon={faClose}
+                  />
+                </div>
+                <IonText className="add-devices-form-header">Add Devices Fail!</IonText>
+                <IonButton onClick={onClose}>Done</IonButton>
+              </div>
+            </SwiperSlide>
+          );
       default:
         return (
           <SwiperSlide key={step}>
