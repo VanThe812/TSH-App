@@ -34,6 +34,26 @@
 }
 .header-title {
   // margin-left: 0.25rem;
+  
+}
+.header-custom {
+  padding: 1rem 0 .5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  ion-text {
+    color: var(--ion-color-black);
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+  
+}
+.add-devices-button-icon {
+  color: var(--ion-color-black);
+  font-size: 15px;
+}
+.display-text {
+  color: var(--ion-color-black);
   font-size: 1rem;
   font-weight: 600;
 }

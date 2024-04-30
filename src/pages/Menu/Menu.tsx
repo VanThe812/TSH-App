@@ -61,25 +61,26 @@ const MenuPage: React.FC = () => {
           <Route path="/automation" component={AutomationPage} exact />
           <Route path="/profile/personal-information" component={PersonalInformationPage} exact />
           <Route path="/profile" component={ProfilePage} exact />
-        <Route path="/add-devices" component={AddDevicesPage} exact />
+          <Route path="/add-devices" component={AddDevicesPage} exact />
 
         </IonRouterOutlet>
+
         <IonTabBar selectedTab="home" className={classNames("menu-tab-bar")} slot="bottom">
           <IonTabButton className="menu-tab-bar-button" tab="home" href="/home">
-            <FontAwesomeIcon className="menu-tab-bar-button-icon" icon={faHouse} />
-            <IonLabel className="menu-tab-bar-button-label">Home</IonLabel>
+            <FontAwesomeIcon className="menu-tab-bar-button-icon large-icon" icon={faHouse} />
+            {/* <IonLabel className="menu-tab-bar-button-label">Home</IonLabel> */}
           </IonTabButton>
           <IonTabButton className="menu-tab-bar-button" tab="rooms" href="/rooms">
-          <FontAwesomeIcon className="menu-tab-bar-button-icon" icon={faDoorClosed} />
-            <IonLabel className="menu-tab-bar-button-label">Room</IonLabel>
+          <FontAwesomeIcon className="menu-tab-bar-button-icon large-icon" icon={faDoorClosed} />
+            {/* <IonLabel className="menu-tab-bar-button-label">Room</IonLabel> */}
           </IonTabButton>
           <IonTabButton className="menu-tab-bar-button" tab="automation" href="/automation">
-          <FontAwesomeIcon className="menu-tab-bar-button-icon" icon={faWandMagicSparkles} />
-            <IonLabel className="menu-tab-bar-button-label">Automation</IonLabel>
+          <FontAwesomeIcon className="menu-tab-bar-button-icon large-icon" icon={faWandMagicSparkles} />
+            {/* <IonLabel className="menu-tab-bar-button-label">Automation</IonLabel> */}
           </IonTabButton>
           <IonTabButton className="menu-tab-bar-button" tab="profile" href="/profile">
-          <FontAwesomeIcon className="menu-tab-bar-button-icon" icon={faUser} />
-            <IonLabel className="menu-tab-bar-button-label">Profile</IonLabel>
+          <FontAwesomeIcon className="menu-tab-bar-button-icon large-icon" icon={faUser} />
+            {/* <IonLabel className="menu-tab-bar-button-label">Profile</IonLabel> */}
           </IonTabButton>
         </IonTabBar>
       </IonTabs>

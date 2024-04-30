@@ -1,8 +1,25 @@
+
+.home-page {
+  background-color: #ffffff;
+}
 .tabar-hidden {
   transform: translateY(100%) !important;
 }
 .menu-tab-bar {
   transform: translateY(0);
   transition: all 0.25s ease;
+  background-color: var(--ion-color-black);
+  border-radius: 16px 16px 0px 0px;
 
+}
+.large-icon {
+  font-size: 18px;
+}
+.menu-tab-bar-button {
+  background-color: transparent;
+  
+  &.tab-selected{
+    color: aliceblue;
+    background-color: #2727279e;
+  }
 }

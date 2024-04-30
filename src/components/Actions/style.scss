@@ -1,0 +1,28 @@
+.action-item {
+    --background: transparent;
+    width: 100%;
+    margin: 0;
+}
+.action-card {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    margin: 0.5rem;
+    align-items: center;
+    border-radius: 1rem !important;
+    color: var(--ion-color-black);
+    background-color: var(--ion-color-gray);
+    padding: 0.7rem;
+    box-shadow: none;
+    div {
+        background-color: var(--ion-color-white);
+        padding: 0.7rem;
+        border-radius: 1rem !important;
+    }
+}
+.action-card-name {
+    padding-left: 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

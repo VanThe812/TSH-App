@@ -66,7 +66,7 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ deviceData }) => {
     }
   };
   const ItemDataValue = (type: string) => {
-    if(deviceData.current_status == 'off') {
+    if (deviceData.current_status == 'off') {
       return 'Lost connection!'
     }
     if (
@@ -88,11 +88,11 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ deviceData }) => {
 
   //temperature || door || switch || light
   return (
-    <IonButton
-      className={classNames("ion-no-padding ion-no-margin my-item-item",{"device-not-connected":deviceData.current_status == 'off'})}
+    <IonButton disabled={deviceData.current_status == "off" ? true : false}
+      className="ion-no-padding ion-no-margin my-item-item"
       fill="clear"
     >
-      <IonCard className="ion-no-margin ion-no-padding my-item-card">
+      <IonCard className={classNames("ion-no-margin ion-no-padding my-item-card", { "device-not-connected": deviceData.current_status == 'off' })}>
         <div className="my-item-card-box">
           {deviceData.type != "outlet" && (
             <div className="my-item-card-icon-box">
@@ -107,9 +107,9 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ deviceData }) => {
               <OutLetIcon className="my-item-card-icon-custom my-item-card-icon" />
             </div>
           )}
-          <IonText className="ellipsis my-item-card-content-title">
+          {/* <IonText className="ellipsis my-item-card-content-title">
             {deviceData.room_name}
-          </IonText>
+          </IonText> */}
           <IonText className="ellipsis my-item-card-content-title">
             {deviceData.name_in_home}
           </IonText>
@@ -120,14 +120,14 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ deviceData }) => {
         {(
           deviceData.current_status != 'off' &&
           (deviceData.type == "door" ||
-          deviceData.type == "light" ||
-          deviceData.type == "switch" ||
-          deviceData.type == "outlet")) && (
-          <IonButton className="my-item-card-turn-off-button" fill="clear">
-            <FontAwesomeIcon className={classNames({'power-off': deviceData.sensor_data})} icon={faPowerOff} />
-          </IonButton>
-        )}
-        { deviceData.current_status == 'off' && (
+            deviceData.type == "light" ||
+            deviceData.type == "switch" ||
+            deviceData.type == "outlet")) && (
+            <IonButton className="my-item-card-turn-off-button" fill="clear">
+              <FontAwesomeIcon className={classNames({ 'power-off': deviceData.sensor_data })} icon={faPowerOff} />
+            </IonButton>
+          )}
+        {deviceData.current_status == 'off' && (
           <IonButton disabled className="my-item-card-turn-off-button my-item-card-turn-off-button-not-disable" fill="clear">
             <CircleExclamationIcon className={'my-item-card-icon-custom power-off'} />
           </IonButton>

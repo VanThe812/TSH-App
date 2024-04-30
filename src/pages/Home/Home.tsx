@@ -26,71 +26,86 @@ import DeviceItem from "../../components/Device/Device";
 import { useHistory } from "react-router";
 import AddDevicesPage from "../AddDevices/AddDevices";
 import AddDevicesSheet from "../../components/AddDevices/AddDevices";
+import ActionItem from "../../components/Actions/ActionItem";
 
 const HomePage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const ListDeviceData = [
     {
-      type:'temperature',//temperature || door || switch || light
-      timecreate:'________',// datetime
-      timemodifile:'________',// datetime
-      room_name:'cscs', // string
-      current_status:'on',//enum on off
-      sensor_data:'38°C', //0 - 100
-      name_in_home:'temperature sensor', 
-      version:'1.1',//string
+      type: 'temperature',//temperature || door || switch || light
+      timecreate: '________',// datetime
+      timemodifile: '________',// datetime
+      room_name: 'Phòng ngủ', // string
+      current_status: 'on',//enum on off
+      sensor_data: '38°C', //0 - 100
+      name_in_home: 'temperature sensor hahah',
+      version: '1.1',//string
     },
     {
-      type:'door',//temperature || door || switch || light
-      timecreate:'________',// datetime
-      timemodifile:'________',// datetime
-      room_name:'cscs', // string
-      current_status:'on',//enum on off
-      sensor_data:false, //0 - 100
-      name_in_home:'door', 
-      version:'1.1',//string
+      type: 'door',//temperature || door || switch || light
+      timecreate: '________',// datetime
+      timemodifile: '________',// datetime
+      room_name: 'Phòng ngủ', // string
+      current_status: 'on',//enum on off
+      sensor_data: false, //0 - 100
+      name_in_home: 'door',
+      version: '1.1',//string
     },
     {
-      type:'light',//temperature || door || switch || light
-      timecreate:'________',// datetime
-      timemodifile:'________',// datetime
-      room_name:'cscs', // string
-      current_status:'on',//enum on off
-      sensor_data:true, //0 - 100
-      name_in_home:'light 1', 
-      version:'1.1',//string
+      type: 'light',//temperature || door || switch || light
+      timecreate: '________',// datetime
+      timemodifile: '________',// datetime
+      room_name: 'Phòng ngủ', // string
+      current_status: 'on',//enum on off
+      sensor_data: true, //0 - 100
+      name_in_home: 'light 1',
+      version: '1.1',//string
     },
     {
-      type:'switch',//temperature || door || switch || light
-      timecreate:'________',// datetime
-      timemodifile:'________',// datetime
-      room_name:'cscs', // string
-      current_status:'on',//enum on off
-      sensor_data:false, //0 - 100
-      name_in_home:'switch sensor', 
-      version:'1.1',//string
+      type: 'switch',//temperature || door || switch || light
+      timecreate: '________',// datetime
+      timemodifile: '________',// datetime
+      room_name: 'Phòng ngủ', // string
+      current_status: 'on',//enum on off
+      sensor_data: false, //0 - 100
+      name_in_home: 'switch sensor',
+      version: '1.1',//string
     },
     {
-      type:'humidity',//temperature || door || switch || light
-      timecreate:'________',// datetime
-      timemodifile:'________',// datetime
-      room_name:'cscs', // string
-      current_status:'on',//enum on off
-      sensor_data:'90%', //0 - 100
-      name_in_home:'humidity', 
-      version:'1.1',//string
+      type: 'humidity',//temperature || door || switch || light
+      timecreate: '________',// datetime
+      timemodifile: '________',// datetime
+      room_name: 'Phòng ngủ', // string
+      current_status: 'on',//enum on off
+      sensor_data: '90%', //0 - 100
+      name_in_home: 'humidity',
+      version: '1.1',//string
     },
     {
-      type:'outlet',//temperature || door || switch || light
-      timecreate:'________',// datetime
-      timemodifile:'________',// datetime
-      room_name:'cscs', // string
-      current_status:'off',//enum on off
-      sensor_data:true, //0 - 100
-      name_in_home:'switch sensor', 
-      version:'1.1',//string
+      type: 'outlet',//temperature || door || switch || light
+      timecreate: '________',// datetime
+      timemodifile: '________',// datetime
+      room_name: 'Phòng ngủ', // string
+      current_status: 'off',//enum on off
+      sensor_data: true, //0 - 100
+      name_in_home: 'switch sensor',
+      version: '1.1',//string
     }
   ]
+  const ListActionDuringDay = [
+    {
+      timeActionStart: '10h30',
+      timeActionEnd: '14h00',
+      name: "Night scene",
+      id: 1,
+    },
+    {
+      id: 2,
+      timeActionStart: '10h00',
+      timeActionEnd: '20h00',
+      name: "Night scene",
+    }
+  ];
 
   const router = useIonRouter();
   const history = useHistory();
@@ -114,39 +129,58 @@ const HomePage: React.FC = () => {
 
   return (
     <IonPage className="home-page">
-      <IonHeader>
-        <IonToolbar>
-          <IonText mode="ios" className="header-title ion-margin" slot="start">My Home</IonText>
-          <IonButtons slot="end">
-          {/* <IonRouterLink routerLink="/add-devices" routerDirection="forward"> */}
-            <IonButton onClick={goToPage} className="add-devices-button" fill="clear">
+      <div className="header-custom">
+        <IonText mode="ios" className="ion-margin" slot="start">My Home</IonText>
+        <IonButtons slot="end">
+          <IonButton onClick={goToPage} className="add-devices-button" fill="clear">
             <FontAwesomeIcon className="add-devices-button-icon" icon={faCirclePlus} />
-            </IonButton>
-            {/* </IonRouterLink> */}
-          </IonButtons>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <IonList className="ion-padding">
-          <IonGrid>
-            <IonRow>
-              {ListDeviceData.map((data,index) => (
-              <IonCol
-              key={index}
-              size="6"
-              size-md="4"
-              className="my-item ion-no-padding ion-no-margin"
-            >
-              <DeviceItem deviceData={data} />
-            </IonCol>
-              ))}
+          </IonButton>
+        </IonButtons>
+      </div>
 
-            </IonRow>
-          </IonGrid>
-        </IonList>
+      <IonContent>
+        <div>
+          <IonText mode="ios" className="ion-margin display-text" slot="start">Actions</IonText>
+          <IonList>
+            <IonGrid className="ion-no-padding">
+              <IonRow>
+                {ListActionDuringDay.map((data, index) => (
+                  <IonCol
+                    sizeXs="12"
+                    sizeSm="12"
+                    sizeMd="4"
+                    key={data.id}
+                    class="ion-no-padding">
+                    <ActionItem actionData={data} />
+                  </IonCol>
+                ))}
+              </IonRow>
+            </IonGrid>
+          </IonList>
+        </div>
+        <div>
+          <IonText mode="ios" className="ion-margin display-text" slot="start">Smart Devices</IonText>
+          <IonList className="ion-padding">
+            <IonGrid>
+              <IonRow>
+                {ListDeviceData.map((data, index) => (
+                  <IonCol
+                    key={index}
+                    size="6"
+                    size-md="4"
+                    className="my-item ion-no-padding ion-no-margin"
+                  >
+                    <DeviceItem deviceData={data} />
+                  </IonCol>
+                ))}
+
+              </IonRow>
+            </IonGrid>
+          </IonList>
+        </div>
       </IonContent>
-      <IonModal isOpen={showModal} breakpoints={[initialBreakpoint,1]} onDidDismiss={closeModal} initialBreakpoint={initialBreakpoint}
-          handleBehavior="cycle">
+      <IonModal isOpen={showModal} breakpoints={[initialBreakpoint, 1]} onDidDismiss={closeModal} initialBreakpoint={initialBreakpoint}
+        handleBehavior="cycle">
         <AddDevicesSheet onClose={closeModal} />
       </IonModal>
     </IonPage>
