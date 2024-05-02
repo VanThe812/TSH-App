@@ -18,7 +18,7 @@ import {
   IonToolbar,
   useIonRouter,
 } from "@ionic/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlus, faMicrophone, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -27,71 +27,35 @@ import { useHistory } from "react-router";
 import AddDevicesPage from "../AddDevices/AddDevices";
 import AddDevicesSheet from "../../components/AddDevices/AddDevices";
 import ActionItem from "../../components/Actions/ActionItem";
+import { useDispatch } from "react-redux";
+import { getListDevicesInHomeAsync } from "../../actions/DeviceAction";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
+import SubDeviceItem from "../../components/Device/Device";
+
 
 const HomePage: React.FC = () => {
+  const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
-  const ListDeviceData = [
-    {
-      type: 'temperature',//temperature || door || switch || light
-      timecreate: '________',// datetime
-      timemodifile: '________',// datetime
-      room_name: 'Phòng ngủ', // string
-      current_status: 'on',//enum on off
-      sensor_data: '38°C', //0 - 100
-      name_in_home: 'temperature sensor hahah',
-      version: '1.1',//string
-    },
-    {
-      type: 'door',//temperature || door || switch || light
-      timecreate: '________',// datetime
-      timemodifile: '________',// datetime
-      room_name: 'Phòng ngủ', // string
-      current_status: 'on',//enum on off
-      sensor_data: false, //0 - 100
-      name_in_home: 'door',
-      version: '1.1',//string
-    },
-    {
-      type: 'light',//temperature || door || switch || light
-      timecreate: '________',// datetime
-      timemodifile: '________',// datetime
-      room_name: 'Phòng ngủ', // string
-      current_status: 'on',//enum on off
-      sensor_data: true, //0 - 100
-      name_in_home: 'light 1',
-      version: '1.1',//string
-    },
-    {
-      type: 'switch',//temperature || door || switch || light
-      timecreate: '________',// datetime
-      timemodifile: '________',// datetime
-      room_name: 'Phòng ngủ', // string
-      current_status: 'on',//enum on off
-      sensor_data: false, //0 - 100
-      name_in_home: 'switch sensor',
-      version: '1.1',//string
-    },
-    {
-      type: 'humidity',//temperature || door || switch || light
-      timecreate: '________',// datetime
-      timemodifile: '________',// datetime
-      room_name: 'Phòng ngủ', // string
-      current_status: 'on',//enum on off
-      sensor_data: '90%', //0 - 100
-      name_in_home: 'humidity',
-      version: '1.1',//string
-    },
-    {
-      type: 'outlet',//temperature || door || switch || light
-      timecreate: '________',// datetime
-      timemodifile: '________',// datetime
-      room_name: 'Phòng ngủ', // string
-      current_status: 'off',//enum on off
-      sensor_data: true, //0 - 100
-      name_in_home: 'switch sensor',
-      version: '1.1',//string
-    }
-  ]
+  const [subDevices, setSubDevices] = useState([]);
+  const userDataRedux = useSelector((state: RootState) => state.user.user);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const action = await dispatch(getListDevicesInHomeAsync({ token: userDataRedux?.token }));
+        console.log(action);
+        if (typeof action.payload != String) {
+          setSubDevices(action.payload);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+
+  }, []);
   const ListActionDuringDay = [
     {
       timeActionStart: '10h30',
@@ -163,14 +127,14 @@ const HomePage: React.FC = () => {
           <IonList className="ion-padding">
             <IonGrid>
               <IonRow>
-                {ListDeviceData.map((data, index) => (
+                {subDevices.map((data, index) => (
                   <IonCol
                     key={index}
                     size="6"
                     size-md="4"
                     className="my-item ion-no-padding ion-no-margin"
                   >
-                    <DeviceItem deviceData={data} />
+                    <SubDeviceItem subDeviceData={data} />
                   </IonCol>
                 ))}
 

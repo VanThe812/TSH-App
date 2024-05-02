@@ -1,3 +1,7 @@
+.header-custom {
+  background-color: #ffffff;
+}
+
 .room-item {
   &-box {
     width: 100%;
@@ -51,6 +55,9 @@
   }
 }
 .select-rooms {
+  text-align: center;
+  font-size: large;
+  border: none;
 }
 ion-select::part(placeholder),
 ion-select::part(text) {
@@ -66,4 +73,43 @@ ion-fab {
 }
 .add-devices-icon {
   font-size: 1.5rem;
+}
+
+.rooms-page {
+  &-header {
+    &ion-toolbar {
+      border: none;
+      
+      
+    }
+    &-list {
+      display: flex;
+      align-items: center;
+      padding: 0.7rem 0;
+    }
+  }
+}
+.button-menu {
+  --background-activated: var(--ion-color-white, #ffffff);
+  --background-focused: var(--ion-color-white, #ffffff);
+  --background-hover: var(--ion-color-white, #fff);
+  --background: #fff;
+}
+.confirm-button {
+  // --color: red !important;
+  color: red !important;
+  
+}
+.menu-action {
+  overflow: hidden;
+}
+
+.not-equipment {
+  padding: 1rem;
+  width: 100%;
+  text-align: center;
+  &-text {
+  }
+  
+  
 }

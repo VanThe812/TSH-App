@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   IonButton,
   IonCard,
@@ -24,30 +24,61 @@ import { ReactSVG } from "react-svg";
 import OutLetIcon from "../../assets/icons/outlet";
 import classNames from "classnames";
 import CircleExclamationIcon from "../../assets/icons/CircleExclamation";
-interface DeviceItemProps {
-  deviceData: {
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
+import { deviceControlAsync, getDataSubDeviceAsync } from "../../actions/DeviceAction";
+
+interface SubDeviceItemProps {
+  subDeviceData: {
+    _id: String,
+    deviceId: String,
     type: string;
-    timecreate: string;
-    timemodifile: string;
-    room_name: string;
-    current_status: string;
-    sensor_data: any;
-    name_in_home: string;
-    version: string;
+    nameSubDevice: string,
+    nameInHome: string,
+    data: number,
+    defaultName: String
   };
 }
 
-const DeviceItem: React.FC<DeviceItemProps> = ({ deviceData }) => {
-  const itemData = {
-    type: "temperature", //temperature || door || switch || light
-    timecreate: "________", // datetime
-    timemodifile: "________", // datetime
-    room_id: "cscs", // string
-    current_status: "on", //enum on off
-    sensor_data: 38, //0 - 100
-    name_in_home: "temperature sensor",
-    version: "1.1", //string
-  };
+
+const SubDeviceItem: React.FC<SubDeviceItemProps> = ({ subDeviceData }) => {
+  const [isOpened, setIsOpened] = React.useState(false);
+  const [isDisabled, setIsDisabled] = React.useState(false);
+  const dispatch = useDispatch();
+  const userDataRedux = useSelector((state: RootState) => state.user.user);
+  const [data, setData] = useState("");
+
+  useEffect(() => {
+    ItemDataValue(subDeviceData.data)
+    const interval = setInterval(() => {
+      fetchData();
+
+    }, 200000);
+    return () => clearInterval(interval);
+  }, []);
+
+
+  const fetchData = async () => {
+    const submitData = {
+      token: userDataRedux?.token,
+      deviceId: subDeviceData.deviceId,
+      nameSubDevice: subDeviceData.nameSubDevice
+    }
+    const action = await dispatch(getDataSubDeviceAsync(submitData))
+    console.log(action);
+
+    if (typeof action.payload != String) {
+      const data = action.payload;
+      // if (subDeviceData.nameSubDevice == 'o1' && subDeviceData.type == "door") {
+      //   console.log('door:', data);
+
+      // }
+      // console.log(data);
+
+      ItemDataValue(data.data, data.lastModifiedTime);
+    }
+  }
 
   const ItemIcon = (type: string) => {
     switch (type) {
@@ -65,76 +96,120 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ deviceData }) => {
         return faQuestion;
     }
   };
-  const ItemDataValue = (type: string) => {
-    if (deviceData.current_status == 'off') {
-      return 'Lost connection!'
+  const ItemDataValue = (dataSet: any, lastModifiedTime = '') => {
+
+    if (lastModifiedTime !== '') {
+      const thresholdSeconds = 60;
+
+      const currentTime = Date.now();
+
+      // Tính thời gian cách thời gian hiện tại (tính bằng giây)
+      const timeDifferenceInSeconds = Math.floor((currentTime - lastModifiedTime) / 1000);
+      console.log(timeDifferenceInSeconds);
+      // console.log(thresholdSeconds - diffInSeconds, lastModifiedTime, currentTime.getTime());
+
+      const isWithinThreshold = timeDifferenceInSeconds <= thresholdSeconds;
+      // console.log(isWithinThreshold);
+
+      if (!isWithinThreshold) {
+        setData('Disconnected');
+        setIsDisabled(true);
+        return;
+      } else {
+        setIsDisabled(false);
+      }
     }
-    if (
-      type == "door" ||
-      type == "light" ||
-      type == "switch" ||
-      type == "outlet"
-    )
-      return deviceData.sensor_data ? "On" : "Off";
-    return deviceData.sensor_data;
+
+
+    if (subDeviceData.type == 'outlet' || subDeviceData.type == "light") {
+      setIsOpened(dataSet == 1 ? true : false);
+      setData(dataSet == 1 ? "On" : "Off")
+      // if (subDeviceData.nameSubDevice == 'o1' && subDeviceData.type == "outlet") {
+      //   console.log(subDeviceData.nameSubDevice + "::" + dataSet, data);
+
+      // }
+
+    } else if (subDeviceData.type == 'temperature') {
+      // setData(Math.round(dataSet) + "°C");
+      setData(dataSet + "°C");
+    } else if (subDeviceData.type == 'humidity') {
+      setData(Math.round(dataSet) + "%");
+    } else if (subDeviceData.type == 'door') {
+      setData(dataSet == 0 ? "Open" : "Close")
+
+    }
   };
-  const ViewDetail = () => {
-
+  const ViewDetail = async () => {
+    console.log('view')
   }
-  const HandleChangeStatusDevices = () => {
-
+  const HandleChangeStatusDevices = async () => {
+    console.log('ok change');
+    // const isOpenedOld = isOpened;
+    setIsDisabled(true);
+    const submitData = {
+      token: userDataRedux?.token,
+      status: !isOpened ? "on" : "off",
+      deviceId: subDeviceData.deviceId,
+      nameSubDevice: subDeviceData.nameSubDevice
+    }
+    const action = await dispatch(deviceControlAsync(submitData))
+    if (typeof action.payload != String) {
+      const data = action.payload.data;
+      fetchData();
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      setIsDisabled(false);
+    }
   }
+  // const
 
 
   //temperature || door || switch || light
   return (
-    <IonButton disabled={deviceData.current_status == "off" ? true : false}
+    <IonButton disabled={isDisabled}
       className="ion-no-padding ion-no-margin my-item-item"
       fill="clear"
     >
-      <IonCard className={classNames("ion-no-margin ion-no-padding my-item-card", { "device-not-connected": deviceData.current_status == 'off' })}>
+      <IonCard className="ion-no-margin ion-no-padding my-item-card">
         <div className="my-item-card-box">
-          {deviceData.type != "outlet" && (
-            <div className="my-item-card-icon-box">
-              <FontAwesomeIcon
-                className="my-item-card-icon"
-                icon={ItemIcon(deviceData.type)}
-              />
-            </div>
-          )}
-          {deviceData.type == "outlet" && (
+          {subDeviceData.type == "outlet" && (
             <div className="my-item-card-icon-box">
               <OutLetIcon className="my-item-card-icon-custom my-item-card-icon" />
             </div>
           )}
+          {subDeviceData.type != "outlet" && (
+            <div className="my-item-card-icon-box">
+              <FontAwesomeIcon
+                className="my-item-card-icon"
+                icon={ItemIcon(subDeviceData.type)}
+              />
+            </div>
+          )}
+
           {/* <IonText className="ellipsis my-item-card-content-title">
             {deviceData.room_name}
           </IonText> */}
-          <IonText className="ellipsis my-item-card-content-title">
-            {deviceData.name_in_home}
+          <IonText onClick={ViewDetail} className="ellipsis my-item-card-content-title">
+            {subDeviceData.nameInHome}
           </IonText>
-          <IonText className="ellipsis my-item-card-content-content">
-            {ItemDataValue(deviceData.type)}
+          <IonText className="ellipsis my-item-card-content-content ">
+            {data}
           </IonText>
         </div>
-        {(
-          deviceData.current_status != 'off' &&
-          (deviceData.type == "door" ||
-            deviceData.type == "light" ||
-            deviceData.type == "switch" ||
-            deviceData.type == "outlet")) && (
-            <IonButton className="my-item-card-turn-off-button" fill="clear">
-              <FontAwesomeIcon className={classNames({ 'power-off': deviceData.sensor_data })} icon={faPowerOff} />
+        {((subDeviceData.type == "light" ||
+          subDeviceData.type == "outlet")) && data != "Disconnected" && (
+            <IonButton onClick={HandleChangeStatusDevices} className="my-item-card-turn-off-button" fill="clear">
+              <FontAwesomeIcon className={classNames({ 'power-off': !isOpened })} icon={faPowerOff} />
             </IonButton>
           )}
-        {deviceData.current_status == 'off' && (
-          <IonButton disabled className="my-item-card-turn-off-button my-item-card-turn-off-button-not-disable" fill="clear">
-            <CircleExclamationIcon className={'my-item-card-icon-custom power-off'} />
-          </IonButton>
+
+        {((subDeviceData.type == 'temperature' || subDeviceData.type == 'humidity')) && !isDisabled && (
+          <IonText className="my-item-card-data">
+            {data}
+          </IonText>
         )}
       </IonCard>
     </IonButton>
   );
 };
 
-export default DeviceItem;
+export default SubDeviceItem;

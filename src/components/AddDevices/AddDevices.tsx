@@ -136,7 +136,7 @@ const AddDevicesSheet: React.FC<AddDevicesSheetProps> = ({ onClose }) => {
             }
 
           } else {
-            console.log('Nooooo')
+            console.log(action.payload)
           }
           await new Promise(resolve => setTimeout(resolve, 5000));
           timeElapsed += 5;

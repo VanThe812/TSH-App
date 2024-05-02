@@ -1,7 +1,7 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { ForgotPasswordData, SignupData, UpdateUserInfoData, UserLoginParams } from "../reducers/userSlice";
 import api from '../services/api';
-import { AddDeiveToHome, checkDeviceAvailable, GetStatusConfirm, UpdateDevice } from "../reducers/deviceSlice";
+import { AddDeiveToHome, checkDeviceAvailable, deviceControl, getDataDevice, getListDevicesInHome, getListSubDevicesInRoom, GetStatusConfirm, UpdateDevice } from "../reducers/deviceSlice";
 
 export const checkDeviceAvailableAsync = createAsyncThunk(
     'devices/checkDeviceAvailable',
@@ -75,10 +75,76 @@ export const updateDeviceAsync = createAsyncThunk(
   }
 )
 
-// export const updateUserInfoAsync = createAsyncThunk(
-//   'user/updateUserInfo',
-//   async (updateUserInfoData: UpdateUserInfoData) => {
-//     const response = await api.post('/user/update-info', updateUserInfoData);
-//     return response.data;
-//   }
-// );
+export const getListDevicesInHomeAsync = createAsyncThunk(
+  'devices/getListDevicesInHome',
+  async (getListDevicesInHomeParams: getListDevicesInHome, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/devices/getListDevicesInHome', getListDevicesInHomeParams);
+      return response.data;
+    } catch (error: any) {
+      // If the server responds with an error message, reject the promise with that message
+      if (error.response && error.response.data && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        // Otherwise, reject with a generic error message
+        return rejectWithValue('An error occurred during login');
+      }
+    }
+  }
+);
+
+export const getListSubDevicesInRoomAsync = createAsyncThunk(
+  'devices/getListSubDevicesInRoom',
+  async (getListSubDevicesInRoomParams: getListSubDevicesInRoom, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/devices/getListSubDevicesInRoom', getListSubDevicesInRoomParams);
+      return response.data;
+    } catch (error: any) {
+      console.log(error);
+      
+      // If the server responds with an error message, reject the promise with that message
+      if (error.response && error.response.data && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        // Otherwise, reject with a generic error message
+        return rejectWithValue('An error occurred during login');
+      }
+    }
+  }
+);
+export const getDataSubDeviceAsync = createAsyncThunk(
+  'devices/getDataDevice',
+  async (getDataDeviceParams: getDataDevice, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/devices/getDataDevice', getDataDeviceParams);
+      return response.data;
+    } catch (error: any) {
+      // If the server responds with an error message, reject the promise with that message
+      if (error.response && error.response.data && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        // Otherwise, reject with a generic error message
+        return rejectWithValue('An error occurred during login');
+      }
+    }
+  }
+);
+
+export const deviceControlAsync = createAsyncThunk(
+  'devices/deviceControl',
+  async (deviceControlParams: deviceControl, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/devices/deviceControl', deviceControlParams);
+      return response.data;
+    } catch (error: any) {
+      // If the server responds with an error message, reject the promise with that message
+      if (error.response && error.response.data && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        // Otherwise, reject with a generic error message
+        return rejectWithValue('An error occurred during login');
+      }
+    }
+  }
+);
+

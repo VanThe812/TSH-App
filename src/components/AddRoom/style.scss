@@ -1,0 +1,24 @@
+.add-room {
+
+    &-header {
+        &-text {
+            color: var(--ion-color-primary);
+        }
+        &-title {
+            text-align: center;
+        }
+    }
+    &-content {
+        
+        &-laber {
+
+        }
+        &-input {
+            margin: 1rem 0;
+            --border-radius: 1rem !important;
+            // border: 1px solid #848484;
+            // padding: 0.6rem 0.5rem !important;
+            // border-radius: 22px;
+        }
+    }
+}

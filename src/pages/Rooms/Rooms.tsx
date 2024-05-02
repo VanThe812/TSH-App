@@ -1,4 +1,5 @@
 import {
+  IonAlert,
   IonButton,
   IonButtons,
   IonCol,
@@ -8,187 +9,265 @@ import {
   IonFabList,
   IonGrid,
   IonHeader,
+  IonIcon,
   IonItem,
+  IonLabel,
   IonList,
+  IonMenu,
+  IonMenuToggle,
+  IonModal,
   IonPage,
+  IonPopover,
   IonRow,
   IonSelect,
   IonSelectOption,
   IonText,
+  IonTitle,
   IonToolbar,
+  useIonToast,
 } from "@ionic/react";
 import React, { useEffect, useState } from "react";
 import "./style.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus, faPlus } from "@fortawesome/free-solid-svg-icons";
-import DeviceItem from "../../components/Device/Device";
-const ListRoomDeviceData = [
-  {
-    id: "abcd1",
-    name: "Living Room",
-    listDevices: [
-      {
-        type: "temperature", //temperature || door || switch || light
-        timecreate: "________", // datetime
-        timemodifile: "________", // datetime
-        room_name: "cscs", // string
-        current_status: "on", //enum on off
-        sensor_data: "38°C", //0 - 100
-        name_in_home: "temperature sensor",
-        version: "1.1", //string
-      },
-      {
-        type: "door", //temperature || door || switch || light
-        timecreate: "________", // datetime
-        timemodifile: "________", // datetime
-        room_name: "cscs", // string
-        current_status: "on", //enum on off
-        sensor_data: false, //0 - 100
-        name_in_home: "door",
-        version: "1.1", //string
-      },
-      {
-        type: "light", //temperature || door || switch || light
-        timecreate: "________", // datetime
-        timemodifile: "________", // datetime
-        room_name: "cscs", // string
-        current_status: "on", //enum on off
-        sensor_data: true, //0 - 100
-        name_in_home: "light 1",
-        version: "1.1", //string
-      },
-    ],
-  },
-  {
-    id: "abcd2",
-    name: "Room 2",
-    listDevices: [
-      {
-        type: "switch", //temperature || door || switch || light
-        timecreate: "________", // datetime
-        timemodifile: "________", // datetime
-        room_name: "cscs", // string
-        current_status: "on", //enum on off
-        sensor_data: false, //0 - 100
-        name_in_home: "switch sensor",
-        version: "1.1", //string
-      },
-      {
-        type: "humidity", //temperature || door || switch || light
-        timecreate: "________", // datetime
-        timemodifile: "________", // datetime
-        room_name: "cscs", // string
-        current_status: "on", //enum on off
-        sensor_data: "90%", //0 - 100
-        name_in_home: "humidity",
-        version: "1.1", //string
-      },
-      {
-        type: "outlet", //temperature || door || switch || light
-        timecreate: "________", // datetime
-        timemodifile: "________", // datetime
-        room_name: "cscs", // string
-        current_status: "off", //enum on off
-        sensor_data: true, //0 - 100
-        name_in_home: "switch sensor",
-        version: "1.1", //string
-      },
-    ],
-  },
-  {
-    id: "abcd3",
-    name: "New Room",
-    listDevices: [],
-  },
-];
-const RoomsPage: React.FC = () => {
-  const [listRooms, setListRooms] = useState(ListRoomDeviceData);
-  const [filters, setFilters] = useState("");
+import { faCirclePlus, faPlus, faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores";
+import { deleteRoomAsync, getAllMyRoomAsync } from "../../actions/RoomAction";
+import { getListSubDevicesInRoomAsync } from "../../actions/DeviceAction";
+import SubDeviceItem from "../../components/Device/Device";
+import AddRoom from "../../components/AddRoom/AddRoom";
+import { set } from "react-hook-form";
+import { Room } from "../../reducers/roomSlice";
 
-  const handleChangeFilter = (newFilter: string) => {
-    setFilters(newFilter);
+const RoomsPage: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [listSubDeviceAndRooms, setListSubDeviceAndRooms] = useState([]);
+  const [filter, setFilter] = useState(""); //roomId
+  const dispatch = useDispatch();
+  const userDataRedux = useSelector((state: RootState) => state.user.user);
+  const [presentToast] = useIonToast();
+  const [action, setAction] = useState('create');
+  const [showAlertDelete, setShowAlertDelete] = useState(false)
+
+  const handleChangeFilter = (newFilter: string = "") => {
+    if (newFilter === "") {
+      newFilter = rooms['0']._id
+    }
+    setFilter(newFilter);
+    renderRoom(newFilter);
   };
   useEffect(() => {
-    if (filters == "") {
-      setListRooms(ListRoomDeviceData);
-    } else {
-      const newListRoom = ListRoomDeviceData.filter(
-        (item) => item.id == filters
-      );
-      setListRooms(newListRoom);
+    const getRooms = async () => {
+      const action = await dispatch(getAllMyRoomAsync({ token: userDataRedux?.token }))
+      if (typeof action.payload === 'string') {
+        presentToast({
+          message: action.payload,
+          duration: 3000,
+          color: 'danger'
+        });
+      }
+      setRooms(Object.values(action.payload.data));
+      setFilter(action.payload.data['0']._id)
     }
-  }, [filters]);
+    getRooms();
+
+    renderRoom(filter);
+  }, []);
+
+  const getListSubDevice = async (roomId: String) => {
+    const submitData = {
+      token: userDataRedux?.token,
+      roomId: roomId
+    }
+    // console.log("submit data : ", submitData);
+
+    const action = await dispatch(getListSubDevicesInRoomAsync(submitData))
+
+    if (typeof action.payload === 'string') {
+      presentToast({
+        message: action.payload,
+        duration: 3000,
+        color: 'danger'
+      });
+      return null;
+    } else {
+      return action.payload;
+    }
+  }
+
+  const renderRoom = (roomId: String = '') => {
+
+    const subDevices = getListSubDevice(roomId)
+      .then(subDevices => {
+        // Xử lý dữ liệu khi promise được giải quyết thành công
+
+        setListSubDeviceAndRooms(subDevices);
+        // const array = subDevices;
+      })
+      .catch(error => {
+        // Xử lý lỗi nếu có
+        console.error(error);
+      });;// lỗi vẫn ở promíe
+  }
+
+  const openModal = (action: string = 'create') => {
+    setShowModal(true);
+    setAction(action);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const goToPage = () => {
+    openModal();
+  };
+
+  // Hàm xử lý mở alert
+  const handleOpenAlert = () => {
+    setShowAlertDelete(true);
+  };
+
+  // Hàm xử lý đóng alert
+  const handleCloseAlert = () => {
+    setShowAlertDelete(false);
+  };
+
+  const confirmDeleteRoom = () => {
+    handleOpenAlert();
+  }
+  const deteleRoom = async () => {
+    const action = await dispatch(deleteRoomAsync({ token: userDataRedux?.token, roomId: filter }));
+
+    if (deleteRoomAsync.fulfilled.match(action)) {
+      const updatedList = rooms.filter(item => item._id !== filter);
+      handleChangeFilter()
+      setRooms(updatedList);
+    } else {
+      presentToast({ message: "An error occurred while deleting the room. Please try again", duration: 3000, color: "danger" });
+    }
+  }
 
   return (
     <IonPage className="rooms-page">
-      <IonHeader>
+
+      <IonHeader className="rooms-page-header">
         <IonToolbar>
-          <IonList>
-            <IonItem lines="none" className="item-filter">
+          <IonList className="rooms-page-header-list">
+            <IonItem>
               <IonSelect
-                mode="ios"
                 aria-label="rooms"
                 interface="action-sheet"
                 placeholder="Select Room"
                 className="select-rooms"
+                value={filter}
                 onIonChange={(ev) => handleChangeFilter(ev.target.value)}
-                fill="outline"
+                interfaceOptions={{
+                  header: 'Select Room',
+                  cssClass: 'my-custom-select'
+                }}
               >
-                <IonSelectOption value={""}>all</IonSelectOption>
-                {ListRoomDeviceData.map((item) => (
-                  <IonSelectOption value={item.id}>{item.name}</IonSelectOption>
+                {Array.isArray(rooms) && rooms.map((item, index) => (
+                  <IonSelectOption key={index} value={item._id}>{item.name}</IonSelectOption>
                 ))}
               </IonSelect>
+            </IonItem>
+            <IonItem className="ion-no-padding">
+              <IonButton id="click-trigger" className="button-menu">
+                <FontAwesomeIcon className="add-devices-button-icon" icon={faEllipsisVertical} />
+              </IonButton>
+              <IonPopover trigger="click-trigger" dismissOnSelect={true}>
+                <IonContent className="menu-action">
+                  <IonList>
+                    <IonItem onClick={() => openModal('update')} button={true} detail={false}>
+                      Update room
+                    </IonItem>
+                    {listSubDeviceAndRooms.length !== 0 && (
+                      <IonItem disabled detail={false}>
+                        Delete room
+                      </IonItem>
+                    )}
+                    {listSubDeviceAndRooms.length === 0 && (
+                      <IonItem button={true} detail={false} onClick={confirmDeleteRoom}>
+                        Delete room
+                      </IonItem>
+                    )}
+
+                  </IonList>
+
+                </IonContent>
+
+              </IonPopover>
             </IonItem>
           </IonList>
         </IonToolbar>
       </IonHeader>
       <IonContent>
-
         <IonList className="ion-no-padding ion-no-margin list-room">
-          {listRooms.map((item) => (
-            <IonItem
-              key={item.id}
-              className="room-item ion-no-padding ion-margin-top"
-            >
-              <div className="room-item-box">
-                <IonText className="room-item-name ion-margin">
-                  {item.name}
-                </IonText>
-                <IonGrid>
-                  <IonRow>
-                    {item.listDevices.map((data, index) => (
-                      <IonCol
-                        key={index}
-                        size="6"
-                        size-md="4"
-                        className="my-item ion-no-padding ion-no-margin"
-                      >
-                        <DeviceItem deviceData={data} />
-                      </IonCol>
-                    ))}
-                    {item.listDevices.length == 0 && (
-                      <IonCol
-                        size="12"
-                        className="my-item ion-no-padding ion-no-margin room-no-item"
-                      >
-                        This Room have 0 item!
-                      </IonCol>
-                    )}
-                  </IonRow>
-                </IonGrid>
-              </div>
-            </IonItem>
-          ))}
-        </IonList>
+          <IonGrid>
+            <IonRow>
 
-          <IonFab slot="fixed" vertical="bottom" horizontal="end" edge={true}>
-            <IonFabButton>
-              <FontAwesomeIcon className="add-devices-icon" icon={faCirclePlus} />
-            </IonFabButton>
-          </IonFab>
+              {listSubDeviceAndRooms.map((data, index) => (
+                <IonCol
+                  key={index}
+                  size="6"
+                  size-md="4"
+                  className="my-item ion-no-padding ion-no-margin"
+                >
+                  <SubDeviceItem subDeviceData={data} />
+                </IonCol>
+              ))}
+            </IonRow>
+
+          </IonGrid>
+
+        </IonList>
+        {listSubDeviceAndRooms.length == 0 && (
+          <div className="not-equipment">
+            <IonText className="not-equipment-text">The room does not have any equipment</IonText>
+          </div>
+        )}
+
+        <IonFab slot="fixed" vertical="bottom" horizontal="end" edge={true}>
+          <IonFabButton onClick={goToPage}>
+            <FontAwesomeIcon className="add-devices-icon" icon={faCirclePlus} />
+          </IonFabButton>
+        </IonFab>
+        <IonAlert
+          isOpen={showAlertDelete}
+          header="Confirm room deletion!"
+          trigger="present-alert"
+          buttons={[
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
+                console.log('Alert canceled');
+                handleCloseAlert();
+              },
+            },
+            {
+              text: 'Confirm',
+              role: 'confirm',
+              cssClass: 'confirm-button',
+              handler: () => {
+                console.log('Alert confirmed');
+                // setShowAlertDelete(false);
+                deteleRoom();
+                handleCloseAlert();
+              },
+            },
+          ]}
+          onDidDismiss={({ detail }) => console.log(`Dismissed with role: ${detail.role}`)}
+        ></IonAlert>
       </IonContent>
-    </IonPage>
+      <IonModal isOpen={showModal} onDidDismiss={closeModal}>
+        <AddRoom onClose={closeModal} roomId={filter} action={action} setRooms={setRooms} />
+      </IonModal>
+
+    </IonPage >
   );
 };
 export default RoomsPage;

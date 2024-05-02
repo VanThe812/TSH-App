@@ -51,3 +51,25 @@ export interface UpdateDevice {
     }
   ]
 }
+
+export interface getListDevicesInHome {
+  token: String;
+}
+
+export interface getListSubDevicesInRoom {
+  token: String,
+  roomId: String
+}
+
+export interface getDataDevice{
+  token: String,
+  deviceId: String,
+  nameSubDevice: String
+}
+
+export interface deviceControl {
+  token: String;
+  status: String;
+  deviceId: String,
+  nameSubDevice: String
+}
